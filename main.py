@@ -6,33 +6,13 @@ from github import GitHubUploader
 
 load_dotenv()
 
-# 山梨県で開催されたIT勉強会コミュニティ
-SERIES_IDS = [
-    "1678",   # 日本Androidの会 山梨支部
-    "4255",   # 子ども向けプログラミングクラブ コーダー道場甲府
-    "5327",   # Redmineプラグインもくもく会 山梨
-    "7069",   # shingen.py
-    "7465",   # 子どものためのプログラミングクラブ CoderDojo北杜
-    "7466",   # 子どものためのプログラミングクラブ CoderDojo韮崎
-    "7759",   # 山梨IT同好会(仮)
-    "9176",   # 富士もくもく会
-    "10940",  # 山梨Web勉強会
-    "11367"   # 山梨SPA
-]
 
-
-def distinct_by_key(data: list[dict], key: str) -> list[dict]:
-    return list({element[key]: element for element in data}.values())
-
-
-def main(ics_file="event.ics"):
-    events1 = ConpassEventRequest(prefecture="山梨県", months=6).get_events()
-    events2 = ConpassEventRequest(series_ids=SERIES_IDS, months=6).get_events()
-    events = distinct_by_key(events1 + events2, "event_id")
+def main(ics_file="event.ics", prefecture="山梨県"):
+    events = ConpassEventRequest(prefecture=prefecture, months=3).get_events()
     events.sort(key=lambda x: x["started_at"])
 
-    calendar_name = "IT勉強会 - 山梨県"
-    calendar_description = "山梨県で開催されるIT勉強会イベントカレンダー"
+    calendar_name = f"IT勉強会 - {prefecture}"
+    calendar_description = f"{prefecture}で開催されるIT勉強会イベントカレンダー"
     ICalendarWriter(
         events,
         name=calendar_name,
@@ -47,4 +27,7 @@ def main(ics_file="event.ics"):
 
 
 if __name__ == "__main__":
-    main()
+    main(ics_file="event_minato.ics", prefecture="東京都港区")
+    main(ics_file="event_shibuya.ics", prefecture="東京都渋谷区")
+    main(ics_file="event_shizuoka.ics", prefecture="静岡県")
+    main(ics_file="event_nagano.ics", prefecture="長野県")
